@@ -1,1692 +1,499 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Builders Dashboard — Lead with AI</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:             #0d1117;
-      --bg-2:           #161b22;
-      --surface:        #1c2128;
-      --surface-2:      #22272e;
-      --border:         #30363d;
-      --border-subtle:  #21262d;
-      --text-primary:   #e6edf3;
-      --text-secondary: #8b949e;
-      --text-tertiary:  #6e7681;
-      --accent:         #58a6ff;
-      --accent-bg:      #1c2a3a;
-      --accent-border:  #1f4878;
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-      --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
-    }
-
-    html { font-size: 15px; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ─── HEADER ─── */
-    .header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 20px 28px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .header-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 4px;
-    }
-
-    .brand-logo svg {
-      flex-shrink: 0;
-    }
-
-    .brand-name {
-      font-size: 20px;
-      font-weight: 700;
-      color: #a0a8b0;
-      letter-spacing: -0.01em;
-    }
-
-    .header-title {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .header-subtitle {
-      font-size: 13px;
-      color: var(--text-tertiary);
-      letter-spacing: 0.02em;
-      padding-left: 42px;
-    }
-
-    .header-meta {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-left: auto;
-    }
-
-    .live-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      background: #22c55e;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    /* ─── CONTAINER ─── */
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 24px 28px;
-    }
-
-    /* ─── METRICS ROW ─── */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .metric-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .metric-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-tertiary);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .metric-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .metric-value {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .metric-sub {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    /* ─── SECTION HEADER ─── */
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      margin: 28px 0 16px 0;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--border);
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .section-subtitle {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      margin-left: 8px;
-      font-weight: 400;
-    }
-
-    /* ─── STAGE BADGE ─── */
-    .stage-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-      border: 1px solid;
-    }
-
-    .stage-badge.ideation {
-      background: #1e1527;
-      border-color: #3b2a5a;
-      color: #a78bfa;
-    }
-
-    .stage-badge.drafting {
-      background: #0f2139;
-      border-color: #1a3a6b;
-      color: #60a5fa;
-    }
-
-    .stage-badge.testing {
-      background: #2d1f00;
-      border-color: #5a3d00;
-      color: #fbbf24;
-    }
-
-
-    .stage-badge.launched {
-      background: #0a2218;
-      border-color: #1a5c3a;
-      color: #34d399;
-    }
-
-    /* ─── 3-MONTH ROADMAP ─── */
-    .roadmap-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 28px;
-      overflow-x: auto;
-    }
-
-    .roadmap-title {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 14px;
-      color: var(--text-primary);
-    }
-
-    .roadmap-timeline {
-      width: 100%;
-    }
-
-    .today-bar {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: rgba(255, 255, 255, 0.55);
-      border-radius: 1px;
-      z-index: 5;
-      pointer-events: none;
-    }
-
-    .today-label {
-      position: absolute;
-      top: -18px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 9px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-    }
-
-    .roadmap-chart {
-      flex: 1;
-      position: relative;
-    }
-
-    .timeline-header {
-      display: flex;
-      position: relative;
-      height: 36px;
-      margin-bottom: 16px;
-      align-items: flex-end;
-    }
-
-    .timeline-marker {
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .week-col-header {
-      position: absolute;
-      top: 0;
-      font-size: 9px;
-      font-weight: 600;
-      color: rgba(139,148,158,0.45);
-      text-align: center;
-      letter-spacing: 0.02em;
-      transform: translateX(-50%);
-      user-select: none;
-    }
-
-    .week-divider {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: rgba(255,255,255,0.06);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .roadmap-dot-wrap {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 3;
-    }
-
-    .roadmap-dot-wrap:hover .dot-tooltip {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-2px);
-      pointer-events: none;
-    }
-
-    .dot-tooltip {
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      background: #1c2128;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 6px;
-      padding: 6px 10px;
-      white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.15s ease, transform 0.15s ease;
-      pointer-events: none;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-      z-index: 20;
-    }
-
-    .dot-tooltip-name {
-      font-size: 11px;
-      font-weight: 600;
-      color: #e6edf3;
-      display: block;
-    }
-
-    .dot-tooltip-stage {
-      font-size: 10px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-      display: block;
-    }
-
-    .timeline-grid {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .timeline-row {
-      display: flex;
-      align-items: center;
-      position: relative;
-      height: 28px;
-    }
-
-    .timeline-person {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 100px;
-      padding-right: 12px;
-    }
-
-    .roadmap-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 700;
-      color: white;
-      flex-shrink: 0;
-      background: var(--accent);
-    }
-
-    .roadmap-person-name {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      min-width: fit-content;
-    }
-
-    .timeline-track {
-      position: relative;
-      flex: 1;
-      height: 28px;
-      background: rgba(48, 54, 61, 0.4);
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      overflow: visible;
-    }
-
-    .roadmap-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid;
-      flex-shrink: 0;
-    }
-
-    /* ─── PEOPLE GRID ─── */
-    .people-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-
-    .person-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .person-card:hover {
-      border-color: var(--text-tertiary);
-      box-shadow: var(--shadow-md);
-    }
-
-    .person-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface-2);
-    }
-
-    .person-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 700;
-      color: white;
-      flex-shrink: 0;
-    }
-
-    .person-meta {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .person-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-primary);
-      display: block;
-      margin-bottom: 2px;
-    }
-
-    .person-stats {
-      font-size: 10px;
-      color: var(--text-tertiary);
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .agents-list {
-      display: flex;
-      flex-direction: column;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .agent-item {
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border-subtle);
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .agent-item:last-child {
-      border-bottom: none;
-    }
-
-    .agent-item:hover {
-      background: rgba(88, 166, 255, 0.08);
-    }
-
-    .agent-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .agent-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-primary);
-      flex: 1;
-    }
-
-    .agent-desc {
-      font-size: 11px;
-      color: var(--text-secondary);
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      margin-bottom: 6px;
-    }
-
-    .agent-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .agent-timeline {
-      flex: 1;
-      height: 3px;
-      background: var(--border);
-      border-radius: 1px;
-      overflow: hidden;
-    }
-
-    .agent-timeline-bar {
-      height: 100%;
-      border-radius: 1px;
-    }
-
-    /* ─── PIPELINE VISUALIZER ─── */
-    .pipeline-track {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 24px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 0;
-    }
-
-    .pipe-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      position: relative;
-      flex: 0 0 auto;
-    }
-
-    .pipe-step-icon {
-      font-size: 20px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-    }
-
-    .pipe-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-      font-weight: 700;
-      color: white;
-      background: var(--border);
-      border-color: var(--border);
-      transition: all 0.3s ease;
-    }
-
-    .pipe-dot.done {
-      background: currentColor;
-      border-color: currentColor;
-    }
-
-    .pipe-dot.done::after {
-      content: '✓';
-    }
-
-    .pipe-dot.current {
-      width: 20px;
-      height: 20px;
-      animation: pipePulse 1.5s ease-in-out infinite;
-      background: currentColor;
-      border-color: currentColor;
-    }
-
-    @keyframes pipePulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.15); opacity: 0.7; }
-    }
-
-    .pipe-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-align: center;
-      white-space: nowrap;
-      color: var(--text-secondary);
-      min-width: 70px;
-    }
-
-    .pipe-label.current {
-      color: currentColor;
-      font-weight: 700;
-    }
-
-    .pipe-label.future {
-      color: var(--text-tertiary);
-    }
-
-    .pipe-connector {
-      width: 32px;
-      height: 2px;
-      background: var(--border);
-      flex: 0 0 auto;
-      transition: background 0.3s ease;
-    }
-
-    .pipe-connector.done {
-      background: currentColor;
-    }
-
-    .pipe-sub-drafts {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    .pipe-draft-dot {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: default;
-    }
-
-    .pipe-draft-circle {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--border);
-      border: 1px solid var(--border);
-    }
-
-    .pipe-draft-circle.active {
-      background: currentColor;
-      border-color: currentColor;
-    }
-
-    /* ─── MODAL ─── */
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      max-width: 700px;
-      width: 100%;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 20px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .modal-title-section {
-      flex: 1;
-    }
-
-    .modal-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 2px;
-    }
-
-    .modal-person {
-      font-size: 11px;
-      color: var(--text-tertiary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .modal-person-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-size: 20px;
-      line-height: 1;
-      padding: 0;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s;
-    }
-
-    .modal-close:hover {
-      color: var(--text-primary);
-    }
-
-    .modal-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .timeline-section {
-      margin-top: 20px;
-    }
-
-    .timeline-section-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-tertiary);
-      margin-bottom: 12px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-    }
-
-    .timeline-item {
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .timeline-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .timeline-meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .slack-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 700;
-      color: white;
-      flex-shrink: 0;
-      background: var(--accent);
-    }
-
-    .slack-author-meta {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .slack-author-name {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-primary);
-      display: block;
-      margin-bottom: 2px;
-    }
-
-    .slack-date {
-      font-size: 10px;
-      color: var(--text-tertiary);
-    }
-
-    .slack-text {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
-      background: var(--bg-2);
-      border-left: 3px solid var(--accent-border);
-      padding: 8px;
-      border-radius: 2px;
-      margin-bottom: 8px;
-    }
-
-    .slack-footer {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 11px;
-    }
-
-    .slack-link {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    .slack-link:hover {
-      color: #90bcf7;
-    }
-
-    .slack-attachment {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--text-tertiary);
-      font-size: 10px;
-    }
-
-    /* ─── FILE ATTACHMENT CARDS ─── */
-    .file-attachment {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      background: var(--accent-bg);
-      border: 1px solid var(--accent-border);
-      border-radius: var(--radius-sm);
-      margin-top: 8px;
-      text-decoration: none;
-      transition: background 0.15s, border-color 0.15s;
-    }
-
-    .file-attachment:hover {
-      background: #1e3652;
-      border-color: var(--accent);
-    }
-
-    .file-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .file-icon.video { background: #2d2008; }
-    .file-icon.image { background: #0d2b1a; }
-
-    .file-meta { flex: 1; min-width: 0; }
-
-    .file-name {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: block;
-    }
-
-    .file-info {
-      font-size: 10px;
-      color: var(--text-tertiary);
-      margin-top: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .file-open-btn {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--accent);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .empty-message {
-      text-align: center;
-      padding: 16px;
-      color: var(--text-tertiary);
-      font-size: 12px;
-      background: var(--surface-2);
-      border-radius: var(--radius-sm);
-      line-height: 1.5;
-    }
-
-    /* ─── SCROLLBAR ─── */
-    .card-body::-webkit-scrollbar,
-    .modal::-webkit-scrollbar,
-    .agents-list::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .card-body::-webkit-scrollbar-track,
-    .modal::-webkit-scrollbar-track,
-    .agents-list::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .card-body::-webkit-scrollbar-thumb,
-    .modal::-webkit-scrollbar-thumb,
-    .agents-list::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 3px;
-    }
-
-    .card-body::-webkit-scrollbar-thumb:hover,
-    .modal::-webkit-scrollbar-thumb:hover,
-    .agents-list::-webkit-scrollbar-thumb:hover {
-      background: var(--text-tertiary);
-    }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 768px) {
-      .header-content {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .header-meta {
-        margin-left: 0;
-        width: 100%;
-      }
-
-      .people-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .roadmap-timeline {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .roadmap-chart {
-        width: 100%;
-      }
-
-      .modal {
-        max-width: 95%;
-      }
-
-      .pipeline-track {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .pipe-connector {
-        width: 2px;
-        height: 24px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Builders Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f1117; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Header */
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+  .header h1 { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; }
+  .header h1 span { color: #818cf8; }
+  .subtitle { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+  .last-sync { font-size: 0.8rem; color: #475569; background: #1e2330; padding: 6px 12px; border-radius: 20px; }
+
+  /* Metric cards */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .metric { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 12px; padding: 20px; text-align: center; }
+  .metric .num { font-size: 2rem; font-weight: 800; }
+  .metric .lbl { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+  .metric.total .num { color: #818cf8; }
+  .metric.ideation .num { color: #38bdf8; }
+  .metric.building .num { color: #fb923c; }
+  .metric.launched .num { color: #4ade80; }
+
+  /* Section title */
+  .section-title { font-size: 1rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: #1e2d3d; }
+
+  /* Leaderboard */
+  .leaderboard { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 16px; padding: 28px; margin-bottom: 32px; }
+
+  /* Podium */
+  .podium { display: flex; align-items: flex-end; justify-content: center; gap: 12px; margin-bottom: 32px; }
+  .podium-slot { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .podium-slot .medal { font-size: 1.6rem; }
+  .podium-slot .p-name { font-size: 0.85rem; font-weight: 600; color: #f1f5f9; }
+  .podium-slot .p-pts { font-size: 1.1rem; font-weight: 800; }
+  .podium-bar { border-radius: 8px 8px 0 0; width: 80px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font-size: 0.7rem; font-weight: 700; }
+  .podium-bar { transition: height 0.3s ease; }
+
+  /* Leaderboard table */
+  .lb-table { width: 100%; border-collapse: collapse; }
+  .lb-table th { text-align: left; font-size: 0.7rem; color: #475569; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 12px; border-bottom: 1px solid #2d3748; }
+  .lb-table th:last-child { text-align: right; }
+  .lb-table td { padding: 12px; vertical-align: middle; }
+  .lb-table tr:not(:last-child) td { border-bottom: 1px solid #1e2330; }
+  .rank-num { font-size: 0.85rem; color: #475569; font-weight: 600; width: 28px; }
+  .lb-name { display: flex; align-items: center; gap: 10px; }
+  .lb-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .lb-name-text { font-size: 0.9rem; font-weight: 600; }
+  .lb-pts { font-weight: 800; font-size: 1rem; text-align: right; }
+  .lb-bar-wrap { width: 120px; }
+  .lb-bar { height: 6px; border-radius: 3px; background: #2d3748; overflow: hidden; }
+  .lb-bar-fill { height: 100%; border-radius: 3px; }
+  .new-badge { font-size: 0.65rem; background: #14532d; color: #4ade80; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+
+  /* Stage pips with tooltip */
+  .pips { display: flex; gap: 6px; position: relative; }
+  .pip { font-size: 0.72rem; background: #1e2330; border: 1px solid #2d3748; border-radius: 6px; padding: 3px 7px; cursor: default; position: relative; white-space: nowrap; }
+  .pip:hover .pip-tooltip { display: block; }
+  .pip-tooltip {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    background: #0f1117;
+    border: 1px solid #3d4a5c;
+    border-radius: 10px;
+    padding: 12px 14px;
+    min-width: 180px;
+    max-width: 240px;
+    max-height: 240px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    pointer-events: none;
+  }
+  .pip-tooltip-title { font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .pip-tooltip-item { font-size: 0.8rem; color: #cbd5e1; padding: 3px 0; border-bottom: 1px solid #1e2330; }
+  .pip-tooltip-item:last-child { border-bottom: none; }
+
+  /* Person cards */
+  .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+  .card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 14px; padding: 20px; }
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .card-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: #fff; flex-shrink: 0; }
+  .card-name { font-size: 0.95rem; font-weight: 700; color: #f1f5f9; }
+  .card-count { font-size: 0.75rem; color: #64748b; }
+  .agent-list { display: flex; flex-direction: column; gap: 8px; }
+  .agent-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; background: #0f1117; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+  .agent-row:hover { background: #1e2330; }
+  .agent-row.has-evidence { border-left: 2px solid; }
+  .agent-name { font-size: 0.82rem; color: #cbd5e1; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stage-badge { font-size: 0.68rem; padding: 2px 7px; border-radius: 4px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+  .stage-ideation { background: #0f2d40; color: #38bdf8; }
+  .stage-drafting { background: #2d1810; color: #fb923c; }
+  .stage-testing { background: #1a2d10; color: #86efac; }
+  .stage-launched { background: #14210a; color: #4ade80; }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 16px; width: 100%; max-width: 560px; max-height: 80vh; display: flex; flex-direction: column; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #2d3748; flex-shrink: 0; }
+  .modal-title { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+  .modal-stage { font-size: 0.75rem; padding: 3px 8px; border-radius: 5px; margin-left: 10px; }
+  .modal-close { background: none; border: none; color: #64748b; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+  .modal-close:hover { background: #2d3748; color: #f1f5f9; }
+  .modal-body { overflow-y: auto; padding: 20px 24px; flex: 1; }
+  .no-evidence { text-align: center; color: #475569; font-size: 0.85rem; padding: 32px 0; }
+  .evidence-item { background: #0f1117; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+  .ev-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .ev-author { font-size: 0.8rem; font-weight: 600; color: #94a3b8; }
+  .ev-date { font-size: 0.75rem; color: #475569; }
+  .ev-text { font-size: 0.83rem; color: #cbd5e1; margin-bottom: 10px; line-height: 1.5; }
+  .ev-files { display: flex; flex-direction: column; gap: 6px; }
+  .ev-file { display: flex; align-items: center; justify-content: space-between; background: #1a1f2e; border: 1px solid #2d3748; border-radius: 7px; padding: 8px 12px; }
+  .ev-file-info { display: flex; align-items: center; gap: 8px; }
+  .ev-file-icon { font-size: 1rem; }
+  .ev-file-name { font-size: 0.78rem; color: #94a3b8; }
+  .ev-file-size { font-size: 0.7rem; color: #475569; }
+  .ev-file-link { font-size: 0.75rem; color: #818cf8; text-decoration: none; padding: 3px 8px; border: 1px solid #3730a3; border-radius: 5px; }
+  .ev-file-link:hover { background: #312e81; }
+</style>
 </head>
 <body>
-
-<header class="header">
-  <div class="header-content">
-    <div>
-      <div class="brand-logo">
-        <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="chipGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#a8e063"/>
-              <stop offset="100%" stop-color="#3abf3a"/>
-            </linearGradient>
-          </defs>
-          <rect x="28" y="6" width="7" height="14" rx="2" fill="url(#chipGrad)"/>
-          <rect x="44" y="6" width="7" height="14" rx="2" fill="url(#chipGrad)"/>
-          <rect x="60" y="6" width="7" height="14" rx="2" fill="url(#chipGrad)"/>
-          <rect x="28" y="80" width="7" height="14" rx="2" fill="url(#chipGrad)"/>
-          <rect x="44" y="80" width="7" height="14" rx="2" fill="url(#chipGrad)"/>
-          <rect x="60" y="80" width="7" height="14" rx="2" fill="url(#chipGrad)"/>
-          <rect x="6" y="28" width="14" height="7" rx="2" fill="url(#chipGrad)"/>
-          <rect x="6" y="44" width="14" height="7" rx="2" fill="url(#chipGrad)"/>
-          <rect x="6" y="60" width="14" height="7" rx="2" fill="url(#chipGrad)"/>
-          <rect x="80" y="28" width="14" height="7" rx="2" fill="url(#chipGrad)"/>
-          <rect x="80" y="44" width="14" height="7" rx="2" fill="url(#chipGrad)"/>
-          <rect x="80" y="60" width="14" height="7" rx="2" fill="url(#chipGrad)"/>
-          <rect x="18" y="18" width="64" height="64" rx="8" stroke="url(#chipGrad)" stroke-width="5" fill="none"/>
-          <rect x="32" y="32" width="36" height="36" rx="4" stroke="url(#chipGrad)" stroke-width="4" fill="none"/>
-        </svg>
-        <span class="brand-name">Lead with AI</span>
-      </div>
-      <p class="header-subtitle">AI Builders</p>
-    </div>
-    <div class="header-meta">
-      <div class="live-badge">
-        <span class="live-dot"></span>
-        #ai-builders
-      </div>
-    </div>
-  </div>
-</header>
-
 <div class="container">
-  <div class="metrics-grid">
-    <div class="metric-card">
-      <div class="metric-label">
-        <span class="metric-dot" style="background: #999;"></span>
-        Total Agents
-      </div>
-      <div class="metric-value" id="metricTotal">—</div>
-      <div class="metric-sub">Across 7 team members</div>
+
+  <div class="header">
+    <div>
+      <h1>AI Builders <span>Dashboard</span></h1>
+      <div class="subtitle">AILA Cohort · 7 builders · 37 agents</div>
     </div>
-
-    <div class="metric-card">
-      <div class="metric-label">
-        <span class="metric-dot" style="background: #a78bfa;"></span>
-        Ideation
-      </div>
-      <div class="metric-value" id="metricIdeation">—</div>
-      <div class="metric-sub">In concept phase</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="metric-label">
-        <span class="metric-dot" style="background: #60a5fa;"></span>
-        In Progress
-      </div>
-      <div class="metric-value" id="metricBuilding">—</div>
-      <div class="metric-sub">Building now</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="metric-label">
-        <span class="metric-dot" style="background: #34d399;"></span>
-        Launched
-      </div>
-      <div class="metric-value" id="metricLaunched">—</div>
-      <div class="metric-sub">In production</div>
-    </div>
+    <div class="last-sync" id="lastSync">Last sync: Apr 14, 2026</div>
   </div>
 
-  <div class="section-header">
-    <h2 class="section-title">3-Month Roadmap</h2>
-    <span class="section-subtitle">Apr 2 → Jul 2, 2026</span>
+  <div class="metrics" id="metrics"></div>
+
+  <div class="section-title">🏆 Leaderboard</div>
+  <div class="leaderboard">
+    <div class="podium" id="podium"></div>
+    <table class="lb-table">
+      <thead><tr>
+        <th>#</th><th>Builder</th><th>Stage Breakdown</th><th>Bar</th><th>Score</th>
+      </tr></thead>
+      <tbody id="lbBody"></tbody>
+    </table>
   </div>
 
-  <div class="roadmap-card" id="roadmapCard">
-  </div>
+  <div class="section-title">👤 Agent Cards</div>
+  <div class="cards-grid" id="cardsGrid"></div>
 
-  <div class="section-header">
-    <h2 class="section-title">By Person</h2>
-    <span class="section-count">7 builders</span>
-  </div>
-
-  <div class="people-grid" id="peopleGrid">
-  </div>
 </div>
 
-<div class="modal-backdrop" id="modalBackdrop">
-  <div class="modal" id="modalContent">
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:4px">
+        <span class="modal-title" id="modalTitle"></span>
+        <span class="modal-stage stage-badge" id="modalStage"></span>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
 
 <script>
-  const agentsData = [
-    {
-      person: 'Daan van Rossum',
-      color: '#7c3aed',
-      agents: [
-        {
-          name: 'Reflection Page Agent',
-          desc: 'Update reflection pages for lessons',
-          slackDate: '2026-04-03',
-          stage: 'launched',
-          evidence: [
-            {
-              author: 'Daan van Rossum',
-              date: 'Apr 3, 2026',
-              text: 'So my main building this week has been in nailing 5 Claude Skills that collectively do the entire process of creating what follows the course lessons: Experiment designer, Prompt architect, Prompt tester, Exercise page architect, and Reflection page designer. We did a massive overhaul for this upcoming cohort and it would have been weeks and weeks of work without these Skills.',
-              permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775187649136849',
-              attachments: [
-                { name: 'Claude Skills Suite.png', type: 'image', size: '', label: 'Skills workflow screenshot' }
-              ]
-            }
+const agentsData = [
+  {
+    name: 'Daan van Rossum', color: '#4F8EF7',
+    agents: [
+      { name: 'Reflection Page Agent', stage: 'launched', slackDate: '2026-04-03',
+        evidence: [{ author: 'Daan van Rossum', date: 'Apr 3, 2026',
+          text: 'Reflection page designer: adds a page where people reflect on the key insight, get a sharable/teachable asset, and rate the lesson.',
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775187649136849',
+          attachments: [{ name: 'Screenshot 2026-04-03 at 09.41.15.png', type: 'image', size: '46.1 KB', label: 'Reflection Page live — 5 skills covering full lesson creation pipeline' }]
+        }]
+      },
+      { name: 'Script Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Research Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Weekly Leadership Updates', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'WhatsApp Student Responses', stage: 'ideation', slackDate: null, evidence: [] }
+    ]
+  },
+  {
+    name: 'Paweł', color: '#F43F5E',
+    agents: [
+      { name: 'Recurring Content Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Referral Touchpoint Sequences', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Demo Day Orchestrator', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'BD Meeting Prep Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Alumni Re-Engagement Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Non-Responder Re-Engagement', stage: 'ideation', slackDate: null, evidence: [] }
+    ]
+  },
+  {
+    name: 'Lee Hong Wei', color: '#22C55E',
+    agents: [
+      { name: 'Auto Reply Email Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Pipeline Manager', stage: 'drafting', draft: 1, slackDate: '2026-04-07',
+        evidence: [{ author: 'Lee Hong Wei', date: 'Apr 7, 2026',
+          text: 'im going to be working on my pipeline manager agent',
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775548015656799',
+          attachments: [{ name: 'image.png', type: 'image', size: '841.2 KB', label: 'Pipeline Manager — Draft 1 early build' }]
+        }]
+      },
+      { name: 'Weekly Report Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Auto Update AILA Landing Page', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Daily Notion Task Alerts', stage: 'ideation', slackDate: null, evidence: [] }
+    ]
+  },
+  {
+    name: 'Quang Nguyen', color: '#F59E0B',
+    agents: [
+      { name: 'Website Migration Tool', stage: 'testing', slackDate: '2026-04-07',
+        evidence: [{ author: 'Quang Nguyen', date: 'Apr 7, 2026',
+          text: "Testing the idea of rebuilding our website from Webflow to Lovable. Successfully connected Lovable to GitHub so we can make changes from both Lovable and other coding agents like Codex & Claude Code.",
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775549734052579',
+          attachments: [{ name: 'Screenshot 2026-04-07 at 15.11.08.png', type: 'image', size: '1.6 MB', label: 'Lovable + GitHub — live testing in progress' }]
+        }]
+      },
+      { name: 'Brand Visual Skill', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Backlog Issue Creator', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Visual Assets Generator', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Brand QA Assistant', stage: 'ideation', slackDate: null, evidence: [] }
+    ]
+  },
+  {
+    name: 'saraswati', color: '#A855F7',
+    agents: [
+      { name: 'Proactive Retention System', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Speaker & Topic Matcher', stage: 'drafting', draft: 1, slackDate: '2026-04-07',
+        evidence: [{ author: 'saraswati', date: 'Apr 7, 2026',
+          text: 'PRO Community: Event Agent still crashing. Goal: finding masterclass speakers/topics based on pain points and community profile.',
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775552642386889',
+          attachments: [{ name: 'Screenshot 2026-04-07 at 16.02.51.png', type: 'image', size: '379.0 KB', label: 'Speaker & Topic Matcher — Draft 1 WIP' }]
+        }]
+      },
+      { name: 'Member Engagement Dashboard', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Homework Submission Tracker', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Certification Automation', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Automation & Comms Templates', stage: 'drafting', draft: 1, slackDate: '2026-04-07',
+        evidence: [{ author: 'saraswati', date: 'Apr 7, 2026',
+          text: 'Creating automation for AILA: LIA day-per-day message aligned with lessons, completed lesson & exercise tracking. Still figuring out how to connect on Circle.',
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775551586147369',
+          attachments: [{ name: 'Screenshot 2026-04-07 at 15.41.35.png', type: 'image', size: '475.2 KB', label: 'Automation & Comms Templates — Draft 1 WIP' }]
+        }]
+      }
+    ]
+  },
+  {
+    name: 'Jen Tran', color: '#EC4899',
+    agents: [
+      { name: 'Remotion Animation Skill', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Audio Converter', stage: 'drafting', draft: 1, slackDate: '2026-04-07',
+        evidence: [{ author: 'Jen Tran', date: 'Apr 7, 2026',
+          text: 'auto download audio files from Slack',
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775549531728179',
+          attachments: [{ name: 'image.png', type: 'image', size: '560.8 KB', label: 'Audio Converter — Draft 1, Slack audio downloader' }]
+        }]
+      },
+      { name: 'Script Extraction Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'Circle Auto-Uploader', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'AI Tools Feature Update', stage: 'ideation', slackDate: null, evidence: [] }
+    ]
+  },
+  {
+    name: 'Xuan Nguyen', color: '#14B8A6',
+    agents: [
+      { name: 'Weekly People Update', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'CV Screening Agent', stage: 'ideation', slackDate: null, evidence: [] },
+      { name: 'JD Write-Up Agent', stage: 'drafting', draft: 1, slackDate: '2026-04-07',
+        evidence: [{ author: 'Xuan Nguyen', date: 'Apr 7, 2026',
+          text: 'JD creator: beginner stage. Created a skill for LwAI brand guidelines so it helps with formatting. Needs more finetune.',
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775550254003259',
+          attachments: [{ name: 'Screenshot 2026-04-07 at 15.22.12.png', type: 'image', size: '111.0 KB', label: 'JD Write-Up Agent — Draft 1 with brand guidelines skill' }]
+        }]
+      },
+      { name: 'Project Management Agent', stage: 'drafting', draft: 1, slackDate: '2026-04-07',
+        evidence: [{ author: 'Xuan Nguyen', date: 'Apr 7, 2026',
+          text: 'Project management: create a daily briefing for myself and for Dung. Needs more improvement for the information to be relevant and actionable.',
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775550110586189',
+          attachments: [{ name: 'Screenshot 2026-04-07 at 15.20.28.png', type: 'image', size: '278.9 KB', label: 'Project Management Agent — Draft 1 daily briefing' }]
+        }]
+      },
+      { name: 'Interview Automation', stage: 'drafting', draft: 1, slackDate: '2026-04-07',
+        evidence: [{ author: 'Xuan Nguyen', date: 'Apr 7, 2026',
+          text: 'Invitation generator (from template) creating drafts to send. Works 80% — still needs manual file attachment. Also built candidate upload interface to save effort gathering files across channels.',
+          permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1775550003578179',
+          attachments: [
+            { name: 'Screenshot 2026-04-07 at 15.13.20.png', type: 'image', size: '645.7 KB', label: 'Interview Automation — invitation generator interface' },
+            { name: 'Screenshot 2026-04-07 at 15.18.37.png', type: 'image', size: '365.3 KB', label: 'Interview Automation — candidate file upload interface' }
           ]
-        },
-        {
-          name: 'Script Agent',
-          desc: 'Better final scripts for content',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Research Agent',
-          desc: 'Create research agent',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Weekly Leadership Updates',
-          desc: 'Weekly briefing on team updates',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'WhatsApp Student Responses',
-          desc: 'Auto-reply to students via WhatsApp',
-          stage: 'ideation',
-          evidence: []
-        }
-      ]
-    },
-    {
-      person: 'Paweł',
-      color: '#ec4899',
-      agents: [
-        {
-          name: 'Recurring Content Agent',
-          desc: 'Interesting insights for marketing communication on a recurring schedule',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Referral Touchpoint Sequences',
-          desc: 'Automated referral follow-up sequences',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Demo Day Orchestrator',
-          desc: 'Generates all promotional content and coordination tasks needed for demo day',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'BD Meeting Prep Agent',
-          desc: 'Prepare research, talking points, and context for business development meetings',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Alumni Re-Engagement Agent',
-          desc: 'Re-engage alumni network',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Non-Responder Re-Engagement',
-          desc: 'Re-engage non-responding contacts',
-          stage: 'ideation',
-          evidence: []
-        }
-      ]
-    },
-    {
-      person: 'Lee Hong Wei',
-      color: '#0284c7',
-      agents: [
-        {
-          name: 'Auto Reply Email Agent',
-          desc: 'Ayden email assistant — reply to client emails, scheduled follow-ups for 7+ day old emails, runs on Lead with AI knowledge',
-          slackDate: '2026-03-24',
-          stage: 'drafting',
-          draft: 1,
-          evidence: [
-            {
-              author: 'Lee Hong Wei',
-              date: 'Mar 24, 2026',
-              text: 'This the first version of Ayden email assistant that I created\n• Help me reply with clients email\n• Also do scheduled follow-ups for emails that are seven days or longer\n• It\'s running on Lead with AI knowledge\nIs not fully running yet, so I can\'t show you guys exactly how it works, but rest assured I will take more time to actually develop it, and hopefully by tomorrow it could be up and running. It\'s a very good learning experience for me and I am looking forward to create more agent like this.',
-              permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV/p1774344932556589',
-              attachments: [
-                { name: 'image.png', type: 'image', size: '211.5 KB', label: 'Screenshot of Ayden email agent' }
-              ]
-            }
-          ]
-        },
-        {
-          name: 'Pipeline Manager',
-          desc: 'Manage sales pipeline',
-          slackDate: '2026-04-07',
-          stage: 'drafting',
-          draft: 1,
-          evidence: [
-            {
-              author: 'Lee Hong Wei',
-              date: 'Apr 7, 2026',
-              text: 'im going to be working on my pipeline manager agent',
-              permalink: 'https://leadwithai-workspace.slack.com/archives/C0AC4EBD9QV',
-              attachments: [
-                { name: 'image.png', type: 'image', size: '841.2 KB', label: 'Pipeline Manager draft screenshot' }
-              ]
-            }
-          ]
-        },
-        {
-          name: 'Weekly Report Agent',
-          desc: 'Generate weekly reports',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Auto Update AILA Landing Page',
-          desc: 'Automated landing page updates',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Daily Notion Task Alerts',
-          desc: 'Daily alerts for assigned tasks',
-          stage: 'ideation',
-          evidence: []
-        }
-      ]
-    },
-    {
-      person: 'Quang Nguyen',
-      color: '#4f46e5',
-      agents: [
-        {
-          name: 'Website Migration Tool',
-          desc: 'Migrate Webflow to promptable codebase (e.g. Lovable)',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Brand Visual Skill',
-          desc: 'Package design guidelines, color, logo, fonts, icons, illustrations for LLM usage',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Backlog Issue Creator',
-          desc: 'Auto create backlog issues from Slack',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Visual Assets Generator',
-          desc: 'Generate diagrams, illustrations, content graphics',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Brand QA Assistant',
-          desc: 'Quality assurance for brand guidelines',
-          stage: 'ideation',
-          evidence: []
-        }
-      ]
-    },
-    {
-      person: 'saraswati',
-      color: '#15803d',
-      agents: [
-        {
-          name: 'Proactive Retention System',
-          desc: 'Alerts for low engagement / payment gaps',stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Speaker & Topic Matcher',
-          desc: 'Match member needs + AI trends → session planning',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Member Engagement Dashboard',
-          desc: 'Attendance on live session, NPS score, activity tracking',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Homework Submission Tracker',
-          desc: 'WA + Circle → auto log & notify homework submissions',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Certification Automation',
-          desc: 'Circle + AI team validation for completion and certification',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Automation & Comms Templates',
-          desc: 'Automation and communication templates for engaging audiences across PRO and Engager programs',
-          stage: 'ideation',
-          evidence: []
-        }
-      ]
-    },
-    {
-      person: 'Jen Tran',
-      color: '#1d4ed8',
-      agents: [
-        {
-          name: 'Remotion Animation Skill',
-          desc: 'Create animations with Remotion',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Audio Converter',
-          desc: 'Auto download audio file from Slack and convert to .mp3',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Script Extraction Agent',
-          desc: 'Extract scripts to create written version on Circle',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Circle Auto-Uploader',
-          desc: 'Auto-upload lessons to Circle',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'AI Tools Feature Update',
-          desc: 'Track and update new features and interface of AI tools',
-          stage: 'ideation',
-          evidence: []
-        }
-      ]
-    },
-    {
-      person: 'Xuan Nguyen',
-      color: '#0d9488',
-      agents: [
-        {
-          name: 'Weekly People Update',
-          desc: 'Weekly team/people updates',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'CV Screening Agent',
-          desc: 'Auto screen and analyze CVs',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'JD Write-Up Agent',
-          desc: 'Generate job descriptions',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Project Management Agent',
-          desc: 'Manage ongoing projects',
-          stage: 'ideation',
-          evidence: []
-        },
-        {
-          name: 'Interview Automation',
-          desc: 'Auto send interview invitations and rejection emails',
-          stage: 'ideation',
-          evidence: []
-        }
-      ]
-    }
+        }]
+      }
+    ]
+  }
+];
+
+/* ---------- helpers ---------- */
+const STAGE_SCORE = { launched: 100, testing: 50, drafting: { 3: 30, 2: 20, 1: 10, undefined: 10 }, ideation: 2 };
+const STAGE_ICON = { launched: '🚀', testing: '🧪', drafting: '✏️', ideation: '💡' };
+const STAGE_LABEL = { launched: 'Launched', testing: 'Testing', drafting: 'Drafting', ideation: 'Ideation' };
+
+function scoreAgent(a) {
+  if (a.stage === 'launched') return 100;
+  if (a.stage === 'testing') return 50;
+  if (a.stage === 'drafting') return STAGE_SCORE.drafting[a.draft] ?? 10;
+  return 2;
+}
+
+function scoreBuilder(b) { return b.agents.reduce((s, a) => s + scoreAgent(a), 0); }
+
+function isRecent(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr), now = new Date();
+  return (now - d) / 86400000 <= 7;
+}
+
+function stageClass(s) { return 'stage-' + s; }
+
+function stageByType(agents, stage) { return agents.filter(a => a.stage === stage).map(a => a.name); }
+
+/* ---------- metrics ---------- */
+function renderMetrics() {
+  const all = agentsData.flatMap(b => b.agents);
+  const m = document.getElementById('metrics');
+  m.innerHTML = `
+    <div class="metric total"><div class="num">${all.length}</div><div class="lbl">Total Agents</div></div>
+    <div class="metric ideation"><div class="num">${all.filter(a => a.stage === 'ideation').length}</div><div class="lbl">Ideation</div></div>
+    <div class="metric building"><div class="num">${all.filter(a => ['drafting','testing'].includes(a.stage)).length}</div><div class="lbl">Building</div></div>
+    <div class="metric launched"><div class="num">${all.filter(a => a.stage === 'launched').length}</div><div class="lbl">Launched</div></div>`;
+}
+
+/* ---------- stage pips with tooltip ---------- */
+function renderPips(b, parentEl) {
+  const stages = ['launched', 'testing', 'drafting', 'ideation'];
+  const pipsEl = parentEl;
+  stages.forEach(s => {
+    const names = stageByType(b.agents, s);
+    if (!names.length) return;
+    const pip = document.createElement('span');
+    pip.className = 'pip';
+    pip.textContent = `${STAGE_ICON[s]} ${names.length}`;
+    const tooltip = document.createElement('div');
+    tooltip.className = 'pip-tooltip';
+    tooltip.innerHTML = `<div class="pip-tooltip-title">${STAGE_ICON[s]} ${STAGE_LABEL[s]}</div>` +
+      names.map(n => `<div class="pip-tooltip-item">• ${n}</div>`).join('');
+    pip.appendChild(tooltip);
+    // position tooltip on hover via JS to avoid clipping
+    pip.addEventListener('mouseenter', function(e) {
+      const rect = pip.getBoundingClientRect();
+      tooltip.style.left = Math.min(rect.left, window.innerWidth - 250) + 'px';
+      tooltip.style.top = (rect.bottom + 6) + 'px';
+    });
+    pipsEl.appendChild(pip);
+  });
+}
+
+/* ---------- leaderboard ---------- */
+function renderLeaderboard() {
+  const sorted = [...agentsData].map(b => ({ ...b, score: scoreBuilder(b) })).sort((a, b) => b.score - a.score);
+  const maxScore = sorted[0].score;
+
+  // Podium (top 3)
+  const podiumEl = document.getElementById('podium');
+  const medals = ['🥇', '🥈', '🥉'];
+  const colors = ['#b8860b', '#3b82f6', '#6b7280'];
+  // Render order: silver (left), gold (centre), bronze (right)
+  // Heights and colours are set by rank (i), not DOM position
+  const barHeights = [90, 65, 45]; // rank 0=gold tallest, 1=silver, 2=bronze
+  const barGradients = [
+    'linear-gradient(180deg,#c0a020 0%,#8b6914 100%)',  // gold
+    'linear-gradient(180deg,#94a3b8 0%,#475569 100%)',  // silver
+    'linear-gradient(180deg,#b7640a 0%,#7c3d04 100%)'   // bronze
   ];
-
-  const stageConfig = {
-    ideation: { icon: '💡', label: 'Ideation', color: '#a78bfa', bgColor: '#1e1527', borderColor: '#3b2a5a' },
-    drafting: { icon: '✏️', label: 'Drafting', color: '#60a5fa', bgColor: '#0f2139', borderColor: '#1a3a6b' },
-    testing: { icon: '🧪', label: 'Testing', color: '#fbbf24', bgColor: '#2d1f00', borderColor: '#5a3d00' },
-    launched: { icon: '🚀', label: 'Launched', color: '#34d399', bgColor: '#0a2218', borderColor: '#1a5c3a' }
-  };
-
-  const stages = ['ideation', 'drafting', 'testing', 'launched'];
-
-  function escapeHtml(text) {
-    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-    return text.replace(/[&<>"']/g, m => map[m]);
-  }
-
-  function formatDate(dateStr) { return dateStr; }
-
-  function getInitials(name) { return name.split(' ').map(n => n[0]).join('').toUpperCase(); }
-
-  function getStageColor(stage) { return stageConfig[stage]?.color || '#666'; }
-
-  function getStageIcon(stage) { return stageConfig[stage]?.icon || '?'; }
-
-  function renderStageBadge(stage, draft) {
-   const config = stageConfig[stage];
-    if (!config) return '';
-    let label = config.label;
-    if (stage === 'drafting' && draft) label = `Draft ${draft}`;
-    return `<span class="stage-badge ${stage}">${config.icon} ${label}</span>`;
-  }
-
-  function renderPipelineTrack(stage, draft) {
-    let html = '<div class="pipeline-track">';
-    stages.forEach((s, idx) => {
-      const config = stageConfig[s];
-      const isDone = stages.indexOf(s) < stages.indexOf(stage);
-      const isCurrent = s === stage;
-      html += `<div class="pipe-step">
-        <div class="pipe-step-icon">${config.icon}</div>
-        <div class="pipe-dot ${isDone ? 'done' : ''} ${isCurrent ? 'current' : ''}" style="color: ${config.color};"></div>
-        <div class="pipe-label ${isCurrent ? 'current' : isDone ? 'done' : 'future'}" style="${isCurrent ? `color: ${config.color};` : ''}">${config.label}</div>
-      </div>`;
-      if (idx < stages.length - 1) {
-        const nextDone = stages.indexOf(stages[idx + 1]) < stages.indexOf(stage);
-        html += `<div class="pipe-connector ${nextDone ? 'done' : ''}" style="${nextDone ? `background: ${getStageColor(stage)};` : ''}"></div>`;
-      }
-    });
-    if (stage === 'drafting') {
-      html += `<div class="pipe-sub-drafts">
-        <div class="pipe-draft-dot"><div class="pipe-draft-circle ${draft === 1 ? 'active' : ''}" style="${draft === 1 ? `background: ${stageConfig.drafting.color}; border-color: ${stageConfig.drafting.color};` : ''}"></div><span>Draft 1</span></div>
-        <div class="pipe-draft-dot"><div class="pipe-draft-circle ${draft === 2 ? 'active' : ''}" style="${draft === 2 ? `background: ${stageConfig.drafting.color}; border-color: ${stageConfig.drafting.color};` : ''}"></div><span>Draft 2</span></div>
-        <div class="pipe-draft-dot"><div class="pipe-draft-circle ${draft === 3 ? 'active' : ''}" style="${draft === 3 ? `background: ${stageConfig.drafting.color}; border-color: ${stageConfig.drafting.color};` : ''}"></div><span>Draft 3</span></div>
-      </div>`;
-    }
-    html += '</div>';
-    return html;
-  }
-
-  function renderAgentCard(agent, person, color) {
-    const timelineProgress = getTimelineProgress(agent.stage);
-    return `<div class="agent-item" onclick="openModal('${escapeHtml(agent.name)}', '${person}', '${color}', ${JSON.stringify(agent).replace(/"/g, '&quot;')})">
-      <div class="agent-header">
-        <span class="agent-name">${escapeHtml(agent.name)}</span>
-        ${renderStageBadge(agent.stage, agent.draft)}
-      </div>
-      <div class="agent-desc">${escapeHtml(agent.desc)}</div>
-      <div class="agent-footer">
-        <div class="agent-timeline">
-          <div class="agent-timeline-bar" style="width: ${timelineProgress}%; background: ${getStageColor(agent.stage)};"></div>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  function getTimelineProgress(stage) {
-    const stageIndex = stages.indexOf(stage);
-    return stageIndex >= 0 ? ((stageIndex + 1) / stages.length) * 100 : 0;
-  }
-
-  function renderPersonCard(personData) {
-    const initials = getInitials(personData.person);
-    const ideationCount = personData.agents.filter(a => a.stage === 'ideation').length;
-    const buildingCount = personData.agents.filter(a => ['drafting', 'testing'].includes(a.stage)).length;
-    const launchedCount = personData.agents.filter(a => a.stage === 'launched').length;
-    return `<div class="person-card">
-      <div class="person-header">
-        <div class="person-avatar" style="background: ${personData.color};">${initials}</div>
-        <div class="person-meta">
-          <span class="person-name">${escapeHtml(personData.person)}</span>
-          <div class="person-stats">
-            <span>${ideationCount} ideation</span>
-            <span>·</span>
-            <span>${buildingCount} building</span>
-            <span>·</span>
-            <span>${launchedCount} done</span>
-          </div>
-        </div>
-      </div>
-      <div class="agents-list">
-        ${personData.agents.map(agent => renderAgentCard(agent, personData.person, personData.color)).join('')}
-      </div>
-    </div>`;
-  }
-
-  function renderRoadmapChart() {
-    const totalWeeks = 13;
-    const weekLabels = ['Apr 2','Apr 9','Apr 16','Apr 23','Apr 30','May 7','May 14','May 21','May 28','Jun 4','Jun 11','Jun 18','Jun 25'];
-
-    let html = '<div class="roadmap-title">Agent Launch Timeline</div>';
-    html += '<div class="roadmap-timeline">';
-    html += '<div class="roadmap-chart">';
-
-    // Header: week columns + start/end date anchors
-    html += '<div class="timeline-header">';
-    // Person column spacer
-    html += '<div style="min-width:112px;"></div>';
-    html += '<div style="position:relative;flex:1;">';
-    for (let w = 1; w <= totalWeeks; w++) {
-      const centerPct = ((w - 0.5) / totalWeeks * 100).toFixed(2);
-      html += `<div class="week-col-header" style="left: ${centerPct}%;">W${w}</div>`;
-    }
-    html += '<div class="timeline-marker" style="left: 0%;">Apr 2</div>';
-    html += '<div class="timeline-marker" style="left: 100%; transform: translateX(-100%);">Jul 2</div>';
-    html += '</div>';
-    html += '</div>';
-
-    // Grid rows
-    html += '<div class="timeline-grid">';
-    agentsData.forEach(personData => {
-      html += '<div class="timeline-row">';
-      html += `<div class="timeline-person">
-        <div class="roadmap-avatar" style="background: ${personData.color};">${getInitials(personData.person)}</div>
-        <div class="roadmap-person-name">${escapeHtml(personData.person)}</div>
-      </div>`;
-      html += '<div class="timeline-track">';
-
-      // Today bar
-      html += '<div class="today-bar" style="left: 5.5%;"><div class="today-label">Today</div></div>';
-
-      // Week dividers (12 internal lines)
-      for (let w = 1; w < totalWeeks; w++) {
-        const pct = (w / totalWeeks * 100).toFixed(2);
-        html += `<div class="week-divider" style="left: ${pct}%;"></div>`;
-      }
-
-      // Agent dots with tooltip — positioned by actual Slack post date
-      const startDate = new Date('2026-04-02');
-      const endDate   = new Date('2026-07-02');
-      const totalMs   = endDate - startDate;
-      personData.agents.forEach(agent => {
-        const agentDate = new Date(agent.slackDate || '2026-04-02');
-        const position  = Math.max(0, Math.min(98, (agentDate - startDate) / totalMs * 100));
-        const config = stageConfig[agent.stage];
-        html += `<div class="roadmap-dot-wrap" style="left: ${position}%;">
-          <div class="roadmap-dot" style="background: ${config.color}; border-color: ${config.color};"></div>
-          <div class="dot-tooltip">
-            <span class="dot-tooltip-name">${escapeHtml(agent.name)}</span>
-            <span class="dot-tooltip-stage">${config.icon} ${config.label}</span>
-          </div>
-        </div>`;
-      });
-
-      html += '</div>';
-      html += '</div>';
-    });
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
-    return html;
-  }
-
-  function renderModal(agentName, personName, personColor, agent) {
-    let html = `<div class="modal-header">
-      <div class="modal-title-section">
-        <div class="modal-title">${escapeHtml(agentName)}</div>
-        <div class="modal-person">
-          <div class="modal-person-dot" style="background: ${personColor};"></div>
-          ${escapeHtml(personName)}
-        </div>
-      </div>
-      <button class="modal-close" onclick="closeModal()">×</button>
-    </div>`;
-    html += '<div class="modal-body">';
-    html += renderPipelineTrack(agent.stage, agent.draft);
-    const evidenceWithFiles = (agent.evidence || []).filter(ev => ev.attachments && ev.attachments.length > 0);
-    if (evidenceWithFiles.length > 0) {
-      html += '<div class="timeline-section">';
-      html += '<div class="timeline-section-title">Evidence & Progress</div>';
-      evidenceWithFiles.forEach(ev => {
-        html += '<div class="timeline-item">';
-        html += `<div class="timeline-meta">
-          <div class="slack-avatar">${getInitials(ev.author)}</div>
-          <div class="slack-author-meta">
-            <span class="slack-author-name">${escapeHtml(ev.author)}</span>
-            <span class="slack-date">${formatDate(ev.date)}</span>
-          </div>
-        </div>`;
-        ev.attachments.forEach(att => {
-          const icon = att.type === 'video' ? '🎬' : att.type === 'image' ? '🖼️' : '📎';
-          html += `<a href="${ev.permalink ? escapeHtml(ev.permalink) : '#'}" target="_blank" class="file-attachment">
-            <div class="file-icon ${att.type}">${icon}</div>
-            <div class="file-meta">
-              <span class="file-name">${escapeHtml(att.label || att.name)}</span>
-              <div class="file-info">${escapeHtml(att.type)}${att.size ? ' · ' + escapeHtml(att.size) : ''}</div>
-            </div>
-            <div class="file-open-btn">View</div>
-          </a>`;
-        });
-        if (ev.permalink) {
-          html += `<div class="slack-footer">
-            <a href="${escapeHtml(ev.permalink)}" target="_blank" class="slack-link">View in Slack</a>
-          </div>`;
-        }
-        html += '</div>';
-      });
-      html += '</div>';
-    }
-    html += '</div>';
-    return html;
-  }
-
-  function openModal(agentName, personName, personColor, agent) {
-    const backdrop = document.getElementById('modalBackdrop');
-    const content = document.getElementById('modalContent');
-    content.innerHTML = renderModal(agentName, personName, personColor, agent);
-    backdrop.classList.add('open');
-  }
-
-  function closeModal() {
-    document.getElementById('modalBackdrop').classList.remove('open');
-  }
-
-  document.getElementById('modalBackdrop').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
+  const order = [1, 0, 2]; // silver left, gold centre, bronze right
+  order.forEach(i => {
+    if (!sorted[i]) return;
+    const b = sorted[i];
+    const slot = document.createElement('div');
+    slot.className = 'podium-slot';
+    slot.innerHTML = `
+      <div class="medal">${medals[i]}</div>
+      <div class="p-name">${b.name.split(' ')[0]}</div>
+      <div class="p-pts" style="color:${b.color}">${b.score} pts</div>
+      <div class="podium-bar" style="height:${barHeights[i]}px;background:${barGradients[i]}"></div>`;
+    podiumEl.appendChild(slot);
   });
 
-  function init() {
-    const allAgents = agentsData.flatMap(p => p.agents);
-    document.getElementById('metricTotal').textContent    = allAgents.length;
-    document.getElementById('metricIdeation').textContent = allAgents.filter(a => a.stage === 'ideation').length;
-    document.getElementById('metricBuilding').textContent = allAgents.filter(a => ['drafting','testing'].includes(a.stage)).length;
-    document.getElementById('metricLaunched').textContent = allAgents.filter(a => a.stage === 'launched').length;
+  // Table
+  const tbody = document.getElementById('lbBody');
+  sorted.forEach((b, idx) => {
+    const recent = b.agents.some(a => isRecent(a.slackDate));
+    const pct = Math.round((b.score / maxScore) * 100);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rank-num">${idx + 1}</td>
+      <td>
+        <div class="lb-name">
+          <div class="lb-dot" style="background:${b.color}"></div>
+          <span class="lb-name-text">${b.name}</span>
+          ${recent ? '<span class="new-badge">↑ new</span>' : ''}
+        </div>
+      </td>
+      <td><div class="pips" id="pips-lb-${idx}"></div></td>
+      <td class="lb-bar-wrap"><div class="lb-bar"><div class="lb-bar-fill" style="width:${pct}%;background:${b.color}"></div></div></td>
+      <td class="lb-pts" style="color:${b.color}">${b.score}</td>`;
+    tbody.appendChild(tr);
+    renderPips(b, tr.querySelector(`#pips-lb-${idx}`));
+  });
+}
 
-    document.getElementById('roadmapCard').innerHTML = renderRoadmapChart();
-    document.getElementById('peopleGrid').innerHTML = agentsData.map(renderPersonCard).join('');
+/* ---------- person cards ---------- */
+function renderCards() {
+  const grid = document.getElementById('cardsGrid');
+  agentsData.forEach((b, bi) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const total = b.agents.length;
+    const active = b.agents.filter(a => a.stage !== 'ideation').length;
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-avatar" style="background:${b.color}">${b.name.split(' ').map(w => w[0]).join('').slice(0,2)}</div>
+        <div><div class="card-name">${b.name}</div><div class="card-count">${active} active · ${total} total</div></div>
+      </div>
+      <div class="agent-list" id="agents-${bi}"></div>`;
+    grid.appendChild(card);
+    const listEl = card.querySelector(`#agents-${bi}`);
+    b.agents.forEach((a, ai) => {
+      const row = document.createElement('div');
+      row.className = 'agent-row' + (a.evidence.length ? ' has-evidence' : '');
+      if (a.evidence.length) row.style.borderColor = b.color;
+      const draftLabel = a.stage === 'drafting' && a.draft ? ` D${a.draft}` : '';
+      row.innerHTML = `
+        <span class="agent-name" title="${a.name}">${a.name}</span>
+        <span class="stage-badge ${stageClass(a.stage)}">${STAGE_ICON[a.stage]} ${STAGE_LABEL[a.stage]}${draftLabel}</span>`;
+      if (a.evidence.length) {
+        row.addEventListener('click', () => openModal(b, a));
+        row.title = 'Click to view evidence';
+      }
+      listEl.appendChild(row);
+    });
+  });
+}
+
+/* ---------- modal ---------- */
+let modalOpen = false;
+function openModal(b, agent) {
+  document.getElementById('modalTitle').textContent = agent.name;
+  const st = document.getElementById('modalStage');
+  st.textContent = `${STAGE_ICON[agent.stage]} ${STAGE_LABEL[agent.stage]}${agent.stage === 'drafting' && agent.draft ? ' D' + agent.draft : ''}`;
+  st.className = `modal-stage stage-badge ${stageClass(agent.stage)}`;
+
+  const body = document.getElementById('modalBody');
+  const withFiles = agent.evidence.filter(ev => ev.attachments && ev.attachments.length);
+  if (!withFiles.length) {
+    body.innerHTML = '<div class="no-evidence">No screenshot evidence yet.</div>';
+  } else {
+    body.innerHTML = withFiles.map(ev => `
+      <div class="evidence-item">
+        <div class="ev-header">
+          <span class="ev-author">${ev.author}</span>
+          <span class="ev-date">${ev.date}</span>
+        </div>
+        <div class="ev-text">${ev.text}</div>
+        <div class="ev-files">
+          ${ev.attachments.map(f => `
+            <div class="ev-file">
+              <div class="ev-file-info">
+                <span class="ev-file-icon">${f.type === 'image' ? '🖼️' : f.type === 'video' ? '🎥' : '📄'}</span>
+                <div><div class="ev-file-name">${f.label || f.name}</div><div class="ev-file-size">${f.size}</div></div>
+              </div>
+              <a href="${ev.permalink}" target="_blank" class="ev-file-link">View →</a>
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
   }
+  document.getElementById('modalOverlay').classList.add('open');
+}
 
-  init();
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+/* ---------- init ---------- */
+renderMetrics();
+renderLeaderboard();
+renderCards();
 </script>
-
 </body>
 </html>
